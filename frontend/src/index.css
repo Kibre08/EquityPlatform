@@ -142,7 +142,51 @@ label {
   border: 1px solid var(--border);
   border-radius: 1rem;
   padding: 1.5rem;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover,
+.feature-card:hover,
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  border-color: var(--primary);
+}
+
+/* Fix for white text on white backgrounds or hard-to-read areas */
+.card h3, 
+.card h4, 
+.card p,
+.dashboard-card h3,
+.dashboard-card p {
+  color: var(--text-primary);
+}
+
+.card p,
+.dashboard-card p {
+  color: var(--text-secondary);
+}
+
+/* Ensure data tables/lists are readable against dark bg */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  color: var(--text-primary);
+}
+
+th, td {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  color: var(--text-secondary);
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Landing Page */
@@ -202,6 +246,20 @@ label {
   padding: 4rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.feature-card:hover {
+  background-color: #263346; /* Slightly lighter on hover */
+}
+
+/* Specific fix for "white on white" if any card accidentally has light bg */
+.feature-card h3 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
 }
 
 .landing-footer {

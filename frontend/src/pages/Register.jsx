@@ -17,6 +17,10 @@ export default function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
+    if (!form.email.endsWith("@gmail.com")) {
+      return alert("Only @gmail.com email addresses are allowed.");
+    }
+
     try {
       const formData = new FormData();
       formData.append("fullName", form.fullName);
@@ -46,9 +50,25 @@ export default function Register() {
     <div className="auth-container">
       <div className="auth-card" style={{ maxWidth: 600 }}>
         <h2 className="auth-title">Register</h2>
-        <input placeholder="Full Name" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} />
-        <input placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-        <input type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <input
+          placeholder="Full Name"
+          value={form.fullName}
+          onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+          autoComplete="off"
+        />
+        <input
+          placeholder="Email (@gmail.com only)"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          autoComplete="off"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          autoComplete="new-password"
+        />
 
         <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
           <option value="">Select Role</option>
