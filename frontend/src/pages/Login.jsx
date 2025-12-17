@@ -24,9 +24,15 @@ export default function Login({ onLogin }) {
       localStorage.setItem("user", JSON.stringify(user));
       if (onLogin) onLogin();
 
-      if (user.role === "admin") navigate("/admin-dashboard");
-      else if (user.role === "startup") navigate("/startup-dashboard");
-      else navigate("/investor-dashboard");
+      if (user.role === "admin") {
+        alert("Admin Dashboard is implemented in the 'feat/frontend-admin' branch. Redirecting to Campaigns page for now.");
+        navigate("/campaigns");
+      } else if (user.role === "startup") {
+        alert("Startup Dashboard is implemented in the 'feat/frontend-admin' branch. Redirecting to Campaigns page for now.");
+        navigate("/campaigns");
+      } else {
+        navigate("/investor-dashboard");
+      }
     } catch (err) {
       alert("Login failed: " + (err.response?.data?.msg || err.message));
     }
