@@ -25,11 +25,9 @@ export default function Login({ onLogin }) {
       if (onLogin) onLogin();
 
       if (user.role === "admin") {
-        alert("Admin Dashboard is implemented in the 'feat/frontend-admin' branch. Redirecting to Campaigns page for now.");
-        navigate("/campaigns");
+        navigate("/admin-dashboard");
       } else if (user.role === "startup") {
-        alert("Startup Dashboard is implemented in the 'feat/frontend-admin' branch. Redirecting to Campaigns page for now.");
-        navigate("/campaigns");
+        navigate("/startup-dashboard");
       } else {
         navigate("/investor-dashboard");
       }

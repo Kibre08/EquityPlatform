@@ -5,19 +5,19 @@ import PrivateRoute from "./components/PrivateRoute";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-// import AdminDashboard from "./pages/AdminDashboard";
-// import AdminPanel from "./pages/AdminPanel";
-// import StartupDashboard from "./pages/StartupDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminPanel from "./pages/AdminPanel";
+import StartupDashboard from "./pages/StartupDashboard";
 import InvestorDashboard from "./pages/InvestorDashboard";
-// import Messaging from "./pages/Messaging";
+import Messaging from "./pages/Messaging";
 import CampaignList from "./pages/CampaignList";
-// import StartupIP from "./pages/StartupIP";
-// import StartupContributions from "./pages/StartupContributions";
+import StartupIP from "./pages/StartupIP";
+import StartupContributions from "./pages/StartupContributions";
 import InvestorAgreements from "./pages/InvestorAgreements";
-// import AdminIP from "./pages/AdminIP";
-// import IPAwareness from "./pages/IPAwareness";
-// import UserManagement from "./pages/UserManagement";
-// import ManageContent from "./pages/ManageContent";
+import AdminIP from "./pages/AdminIP";
+import IPAwareness from "./pages/IPAwareness";
+import UserManagement from "./pages/UserManagement";
+import ManageContent from "./pages/ManageContent";
 
 import api from "./services/api";
 
@@ -93,8 +93,8 @@ function App() {
           <Route path="/login" element={<Login onLogin={refreshUser} />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Admin Routes - Commented out for Public Branch */}
-          {/* <Route
+          {/* Admin Routes */}
+          <Route
             path="/admin-dashboard"
             element={
               <PrivateRoute>
@@ -133,10 +133,10 @@ function App() {
                 {user?.role === "admin" ? <ManageContent /> : <Navigate to="/login" />}
               </PrivateRoute>
             }
-          /> */}
+          />
 
-          {/* Startup Routes - Commented out for Public Branch */}
-          {/* <Route
+          {/* Startup Routes */}
+          <Route
             path="/startup-dashboard"
             element={
               <PrivateRoute>
@@ -167,7 +167,7 @@ function App() {
                 <IPAwareness />
               </PrivateRoute>
             }
-          /> */}
+          />
 
           {/* Investor Routes */}
           <Route
@@ -188,14 +188,14 @@ function App() {
           />
 
           {/* Shared */}
-          {/* <Route
+          <Route
             path="/messages"
             element={
               <PrivateRoute>
                 <Messaging />
               </PrivateRoute>
             }
-          /> */}
+          />
           <Route path="/campaigns" element={<CampaignList />} />
 
           {/* Default Redirect */}
