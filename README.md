@@ -4,7 +4,7 @@
 A full-stack Equity Platform built using the MERN stack.
 
 ## Team Members & Contributions
-*   **Kibre Moges**: Project Lead & Platform Refinement
+*   **Kibre Moges**: Project Lead, Backend & Frontend Development
 *   **Abel1365**: Backend API & System Architecture
 *   **Danny11w**: Frontend UI/UX & Content Management
 *   **Miyo16**: Database Management & Logic Verification
