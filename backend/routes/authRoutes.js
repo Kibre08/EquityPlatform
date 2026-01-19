@@ -12,8 +12,8 @@ router.post(
   upload.fields([{ name: "selfie", maxCount: 1 }, { name: "idDocument", maxCount: 1 }]),
   async (req, res) => {
     try {
-      // console.log("Register Body:", req.body);
-      // console.log("Register Files:", req.files);
+      console.log("Register Body:", req.body);
+      console.log("Register Files:", req.files);
 
       const { fullName, email, password, role, category, companyName, companyDescription } = req.body;
       if (!fullName || !email || !password || !role) return res.status(400).json({ msg: "Missing fields" });

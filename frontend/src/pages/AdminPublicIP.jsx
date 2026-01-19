@@ -1,6 +1,6 @@
 // src/pages/AdminPublicIP.jsx
 import React, { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { BASE_URL } from "../services/api";
 
 export default function AdminPublicIP() {
   const [file, setFile] = useState(null);
@@ -24,7 +24,7 @@ export default function AdminPublicIP() {
       const fd = new FormData();
       fd.append("file", file);
       fd.append("caption", caption || "");
-      await api.post("/admin/public-ip", fd, { headers: { "Content-Type": "multipart/form-data" } });
+      await api.post("/admin/public-ip", fd);
       alert("Uploaded");
       setFile(null);
       setCaption("");
@@ -52,7 +52,7 @@ export default function AdminPublicIP() {
       {docs.length === 0 ? <p>No resources yet.</p> : docs.map(d => (
         <div key={d._id} style={{ border: "1px solid #ddd", padding: 8, marginBottom: 8 }}>
           <div>{d.caption}</div>
-          <div><a href={`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/uploads/${d.file}`} target="_blank" rel="noreferrer">View</a></div>
+          <div><a href={`${BASE_URL}/uploads/${d.file}`} target="_blank" rel="noreferrer">View</a></div>
         </div>
       ))}
     </div>

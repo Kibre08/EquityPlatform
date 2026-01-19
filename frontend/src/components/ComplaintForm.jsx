@@ -7,26 +7,63 @@ export default function ComplaintForm() {
     const [open, setOpen] = useState(false);
 
     const submit = async () => {
+        if (!message.trim()) return alert("Please specify the issue.");
         try {
             await api.post("/complaints", { target, message });
-            alert("Complaint submitted. Admin will review.");
+            alert("Protocol report filed. Admin will review the dispatch.");
             setTarget("");
             setMessage("");
             setOpen(false);
         } catch (err) {
-            alert("Failed to submit");
+            alert("Terminal error: Failed to dispatch report.");
         }
     };
 
-    if (!open) return <button onClick={() => setOpen(true)} style={{ background: "#ff4444", color: "white", border: "none", padding: "8px 16px", borderRadius: 4, cursor: "pointer", marginTop: 20 }}>🚩 Report Issue / Complaint</button>;
+    if (!open) return (
+        <button
+            onClick={() => setOpen(true)}
+            className="btn btn-secondary"
+            style={{
+                marginTop: '1.5rem',
+                borderColor: 'rgba(244, 63, 94, 0.3)',
+                color: 'var(--danger)',
+                background: 'rgba(244, 63, 94, 0.05)'
+            }}
+        >
+            🚩 Report Platform Incident
+        </button>
+    );
 
     return (
-        <div style={{ border: "1px solid #ff4444", padding: 15, borderRadius: 8, marginTop: 20, background: "#fff0f0" }}>
-            <h4>Submit Complaint</h4>
-            <input placeholder="Who/What is this about? (Optional)" value={target} onChange={(e) => setTarget(e.target.value)} style={{ width: "100%", padding: 8, marginBottom: 8 }} />
-            <textarea placeholder="Describe the issue..." value={message} onChange={(e) => setMessage(e.target.value)} style={{ width: "100%", padding: 8, marginBottom: 8 }} rows={3} />
-            <button onClick={submit} style={{ marginRight: 10 }}>Submit</button>
-            <button onClick={() => setOpen(false)}>Cancel</button>
+        <div className="dashboard-card" style={{ marginTop: '1.5rem', border: '1px solid rgba(244, 63, 94, 0.2)' }}>
+            <div className="card-header">
+                <h4 style={{ margin: 0, color: 'var(--danger)' }}>Issue Mitigation Protocol</h4>
+            </div>
+
+            <div className="form-group" style={{ marginTop: '1rem' }}>
+                <label className="stat-label">Subject of Report</label>
+                <input
+                    placeholder="Identify the entity or feature..."
+                    value={target}
+                    onChange={(e) => setTarget(e.target.value)}
+                />
+            </div>
+
+            <div className="form-group">
+                <label className="stat-label">Incident Description</label>
+                <textarea
+                    placeholder="Provide a detailed outline of the discrepancy..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={4}
+                />
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button onClick={submit} className="btn btn-primary btn-sm">Dispatch Report</button>
+                <button onClick={() => setOpen(false)} className="btn btn-secondary btn-sm">Abort</button>
+            </div>
         </div>
     );
 }
+

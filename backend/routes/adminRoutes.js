@@ -78,6 +78,7 @@ router.post("/approve-contribution/:id", verifyToken, allowRoles("admin"), async
     if (contribution.isApproved) return res.status(400).json({ msg: "Already approved" });
 
     contribution.isApproved = true;
+    contribution.status = "approved";
     contribution.verifiedAt = new Date();
     await contribution.save();
 
@@ -91,7 +92,7 @@ router.post("/approve-contribution/:id", verifyToken, allowRoles("admin"), async
 
 router.post("/reject-contribution/:id", verifyToken, allowRoles("admin"), async (req, res) => {
   try {
-    const contribution = await Contribution.findByIdAndUpdate(req.params.id, { isRejected: true }, { new: true });
+    const contribution = await Contribution.findByIdAndUpdate(req.params.id, { isRejected: true, status: "rejected" }, { new: true });
     if (!contribution) return res.status(404).json({ msg: "Contribution not found" });
     res.json({ msg: "Contribution rejected", contribution });
   } catch (err) {

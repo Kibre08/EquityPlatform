@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { BASE_URL } from "../services/api";
 
 export default function UserManagement() {
     const [users, setUsers] = useState([]);
@@ -33,47 +33,58 @@ export default function UserManagement() {
         }
     };
 
-    if (loading) return <div className="container">Loading...</div>;
+    if (loading) return <div className="container">Loading users...</div>;
 
     return (
         <div className="container">
-            <h1>👥 User Management</h1>
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 20 }}>
-                <thead>
-                    <tr style={{ background: "#f4f4f4", textAlign: "left" }}>
-                        <th style={{ padding: 10, border: "1px solid #ddd" }}>Name</th>
-                        <th style={{ padding: 10, border: "1px solid #ddd" }}>Email</th>
-                        <th style={{ padding: 10, border: "1px solid #ddd" }}>Role</th>
-                        <th style={{ padding: 10, border: "1px solid #ddd" }}>Files</th>
-                        <th style={{ padding: 10, border: "1px solid #ddd" }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map(u => (
-                        <tr key={u._id}>
-                            <td style={{ padding: 10, border: "1px solid #ddd" }}>{u.fullName || u.companyName}</td>
-                            <td style={{ padding: 10, border: "1px solid #ddd" }}>{u.email}</td>
-                            <td style={{ padding: 10, border: "1px solid #ddd" }}>{u.role}</td>
-                            <td style={{ padding: 10, border: "1px solid #ddd" }}>
-                                {u.selfie && (
-                                    <div>
-                                        <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${u.selfie}`} target="_blank" rel="noreferrer">Selfie</a>
-                                    </div>
-                                )}
-                                {u.idDocument && (
-                                    <div>
-                                        <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${u.idDocument}`} target="_blank" rel="noreferrer">ID Doc</a>
-                                    </div>
-                                )}
-                                {!u.selfie && !u.idDocument && "No files"}
-                            </td>
-                            <td style={{ padding: 10, border: "1px solid #ddd" }}>
-                                <button onClick={() => handleDelete(u._id)} style={{ background: "red", color: "white", border: "none", padding: "5px 10px", cursor: "pointer" }}>Delete</button>
-                            </td>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                <h1 style={{ marginBottom: 0 }}>👥 User Management</h1>
+                <div className="user-badge">Admin Access</div>
+            </div>
+
+            <div className="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Documents</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {users.map(u => (
+                            <tr key={u._id}>
+                                <td>{u.fullName || u.companyName}</td>
+                                <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                                <td>
+                                    <span className="user-badge" style={{ color: u.role === 'admin' ? 'var(--accent)' : 'var(--text-secondary)' }}>
+                                        {u.role}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                        {u.selfie && (
+                                            <a href={`${BASE_URL}/uploads/${u.selfie}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.5rem' }}>Selfie</a>
+                                        )}
+                                        {u.idDocument && (
+                                            <a href={`${BASE_URL}/uploads/${u.idDocument}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.5rem' }}>ID Doc</a>
+                                        )}
+                                        {!u.selfie && !u.idDocument && <span style={{ color: 'var(--text-muted)' }}>None</span>}
+                                    </div>
+                                </td>
+                                <td>
+                                    <button onClick={() => handleDelete(u._id)} className="btn btn-sm" style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', color: 'var(--danger)', border: '1px solid rgba(244, 63, 94, 0.2)' }}>
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
+

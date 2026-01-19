@@ -1,54 +1,60 @@
 // src/pages/IPAwareness.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function IPAwareness() {
   return (
     <div className="container">
-      <h1>Intellectual Property (IP) — Quick Awareness</h1>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <h1 style={{ textAlign: 'center', marginBottom: '3rem' }}>Intellectual Property <span className="text-gradient">Awareness Center</span></h1>
 
-      <p>
-        Intellectual Property (IP) means creations of the mind — inventions, literary and artistic works,
-        designs, symbols, names and images used in commerce. Protecting IP helps innovators and creators
-        get recognition and economic benefit from what they invent or create.
-      </p>
+        <div className="glass-card" style={{ padding: '3rem', marginBottom: '2.5rem' }}>
+          <p style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '2rem', lineHeight: '1.8' }}>
+            Intellectual Property (IP) refers to creations of the mind — inventions, literary and artistic works,
+            designs, symbols, names and images used in commerce. Protecting IP helps innovators and creators
+            get recognition and economic benefit from what they invent or create.
+          </p>
 
-      <h3>Types of IP</h3>
+          <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr', gap: '2rem' }}>
+            <div className="glass" style={{ padding: '1.75rem', borderRadius: '1rem' }}>
+              <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem', fontSize: '1.25rem' }}>Patents</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>Give inventors exclusive rights to use and commercialize a novel invention for a limited time (usually 20 years).</p>
+            </div>
 
-      <h4>Patents</h4>
-      <p>Give inventors exclusive rights to use and commercialize a novel invention for a limited time (usually 20 years).</p>
+            <div className="glass" style={{ padding: '1.75rem', borderRadius: '1rem' }}>
+              <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem', fontSize: '1.25rem' }}>Trademarks</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>Protect brand identifiers — names, logos, slogans — that distinguish goods and services in the market.</p>
+            </div>
 
-      <h4>Trademarks</h4>
-      <p>Protect brand identifiers — names, logos, slogans — that distinguish goods and services in the market.</p>
+            <div className="glass" style={{ padding: '1.75rem', borderRadius: '1rem' }}>
+              <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem', fontSize: '1.25rem' }}>Copyright</h4>
+              <p style={{ color: 'var(--text-secondary)' }}>Protects original expressions like books, music, art, films, and software (the form of expression, not ideas).</p>
+            </div>
+          </div>
+        </div>
 
-      <h4>Copyright</h4>
-      <p>Protects original expressions like books, music, art, films, and software (the form of expression, not ideas).</p>
+        <div className="glass-card" style={{ padding: '2rem', textAlign: 'center' }}>
+          <h3 style={{ marginBottom: '1.5rem' }}>Official Resources</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem' }}>
+            To learn more about professional legal registration in Ethiopia, visit the official EIPA portal.
+          </p>
 
-      <h4>Trade secrets</h4>
-      <p>Company confidential business information (like formulas, processes, or practices) that derive economic value from secrecy.</p>
+          <a href="https://www.eipa.gov.et" target="_blank" rel="noreferrer" className="btn btn-secondary" style={{ marginBottom: '2.5rem' }}>
+            🌐 Visit Ethiopian IP Authority (EIPA)
+          </a>
 
-      <h4>Designs</h4>
-      <p>Protect the visual design of objects (shapes, patterns, ornamentation).</p>
+          <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '2rem' }}>
+            <Link to="/startup/ip" className="btn btn-primary btn-large" style={{ width: '100%' }}>
+              I understand the guidelines. Proceed to My IP
+            </Link>
+          </div>
+        </div>
 
-      <h3>Why it matters</h3>
-      <p>IP protection encourages innovation, helps startups attract investment, and ensures fair competition.</p>
-
-      <p style={{ marginTop: 12 }}>
-        To learn more about legal registration in Ethiopia, visit the Ethiopian Intellectual Property Authority (EIPA):
-      </p>
-
-      <p>
-        <a href="https://www.eipa.gov.et" target="_blank" rel="noreferrer">Ethiopian Intellectual Property Authority (EIPA)</a>
-      </p>
-
-      <p style={{ marginTop: 18, fontStyle: "italic" }}>
-        Note: This page is a simple awareness summary. For legal advice or assistance in registering IP, contact a qualified IP attorney or the EIPA directly.
-      </p>
-
-      <div style={{ marginTop: 30, textAlign: "center" }}>
-        <a href="/startup/ip" style={{ padding: "10px 20px", backgroundColor: "#28a745", color: "white", textDecoration: "none", borderRadius: 5, fontSize: 16 }}>
-          I have reviewed the guidelines. Proceed to Upload IP
-        </a>
+        <p style={{ marginTop: '2.5rem', textAlign: 'center', color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '0.85rem' }}>
+          Disclaimer: This page is a summary for awareness only. For official legal advice, please contact a qualified IP attorney.
+        </p>
       </div>
     </div>
   );
 }
+

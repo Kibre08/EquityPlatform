@@ -1,162 +1,165 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { BASE_URL } from "../services/api";
 
 export default function AdminPanel() {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [pendingContributions, setPendingContributions] = useState([]);
   const [pendingIpDocs, setPendingIpDocs] = useState([]);
   const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchPendingUsers = async () => {
+  const fetchData = async () => {
     try {
-      const res = await api.get("/admin/pending-users");
-      setPendingUsers(res.data.users || []);
+      const [users, contributions, ip, complaintsRes] = await Promise.all([
+        api.get("/admin/pending-users"),
+        api.get("/admin/pending-contributions"),
+        api.get("/admin/pending-ipdocs"),
+        api.get("/complaints")
+      ]);
+      setPendingUsers(users.data.users || []);
+      setPendingContributions(contributions.data.contributions || []);
+      setPendingIpDocs(ip.data.docs || []);
+      setComplaints(complaintsRes.data.complaints || []);
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  const fetchPendingContributions = async () => {
-    try {
-      const res = await api.get("/admin/pending-contributions");
-      setPendingContributions(res.data.contributions || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchPendingIpDocs = async () => {
-    try {
-      const res = await api.get("/admin/pending-ipdocs");
-      setPendingIpDocs(res.data.docs || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const fetchComplaints = async () => {
-    try {
-      const res = await api.get("/complaints");
-      setComplaints(res.data.complaints || []);
-    } catch (err) {
-      console.error("Failed to fetch complaints", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPendingUsers();
-    fetchPendingContributions();
-    fetchPendingIpDocs();
-    fetchComplaints();
+    fetchData();
   }, []);
 
   const handleUserApproval = async (id, action) => {
     try {
       await api.post(`/admin/${action}/${id}`);
-      fetchPendingUsers();
+      fetchData();
     } catch (err) {
-      console.error(err);
-      alert("Action failed");
+      alert("Verification protocol failure.");
     }
   };
 
   const handleContributionApproval = async (id, action) => {
     try {
       await api.post(`/admin/${action}-contribution/${id}`);
-      fetchPendingContributions();
+      fetchData();
     } catch (err) {
-      console.error(err);
-      alert("Action failed");
+      alert("Ledger update failure.");
     }
   };
 
   const handleIpApproval = async (id, action) => {
     try {
       await api.post(`/admin/${action}-ip/${id}`);
-      fetchPendingIpDocs();
+      fetchData();
     } catch (err) {
-      console.error(err);
-      alert("Action failed");
+      alert("IP validation failure.");
     }
   };
 
+  if (loading) return <div className="container">Accessing approval buffers...</div>;
+
   return (
     <div className="container">
-      <h1>📊 Admin Panel</h1>
+      <header style={{ marginBottom: '3rem' }}>
+        <h1 style={{ marginBottom: '0.5rem' }}>Management <span className="text-gradient">Console</span></h1>
+        <p style={{ color: 'var(--text-secondary)' }}>Centralized moderation of users, capital, and intellectual assets.</p>
+      </header>
 
-      <section>
-        <h2>Pending Users ({pendingUsers.length})</h2>
-        {pendingUsers.length === 0 && <p>No pending users.</p>}
-        {pendingUsers.map(u => (
-          <div key={u._id} className="card" style={{ marginBottom: 16 }}>
-            <div><strong>{u.fullName}</strong> ({u.role})</div>
-            <div>Email: {u.email}</div>
-            <div>
-              Selfie: {u.selfie ? <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${u.selfie}`} target="_blank" rel="noreferrer">View</a> : "No"}
-              <span style={{ margin: "0 10px" }}>|</span>
-              ID: {u.idDocument ? <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${u.idDocument}`} target="_blank" rel="noreferrer">View PDF</a> : "No"}
-            </div>
-            <div style={{ marginTop: 8 }}>
-              <button className="btn btn-primary" onClick={() => handleUserApproval(u._id, "approve")} style={{ marginRight: 8 }}>Approve</button>
-              <button className="btn btn-secondary" onClick={() => handleUserApproval(u._id, "reject")}>Reject</button>
-            </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+
+        {/* Pending Users */}
+        <section>
+          <div className="card-header" style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ margin: 0 }}>Account Verification</h2>
+            <span className="badge badge-warning">{pendingUsers.length} Pending</span>
           </div>
-        ))}
-      </section>
+          {pendingUsers.length === 0 ? (
+            <div className="dashboard-card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No identities require verification.</div>
+          ) : (
+            <div className="dashboard-grid">
+              {pendingUsers.map(u => (
+                <div key={u._id} className="dashboard-card">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <span className="badge badge-secondary">{u.role}</span>
+                  </div>
+                  <h4 style={{ margin: '0 0 0.25rem 0' }}>{u.fullName}</h4>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>{u.email}</p>
 
-      <hr style={{ borderColor: 'var(--border)', margin: '32px 0' }} />
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                    {u.selfie && <a href={`${BASE_URL}/uploads/${u.selfie}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>Selfie</a>}
+                    {u.idDocument && <a href={`${BASE_URL}/uploads/${u.idDocument}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>ID PDF</a>}
+                  </div>
 
-      <section>
-        <h2>Pending Contributions ({pendingContributions.length})</h2>
-        {pendingContributions.length === 0 && <p>No pending contributions.</p>}
-        {pendingContributions.map(c => (
-          <div key={c._id} className="card" style={{ marginBottom: 16 }}>
-            <div><strong>{c.investor?.fullName || c.investor}</strong> → {c.campaign?.title}</div>
-            <div>Amount: ${c.amount}</div>
-            <div>Payment Proof: {c.proofFile ? <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${c.proofFile}`} target="_blank" rel="noreferrer">View</a> : "No proof"}</div>
-            <div style={{ marginTop: 8 }}>
-              <button className="btn btn-primary" onClick={() => handleContributionApproval(c._id, "approve")} style={{ marginRight: 8 }}>Approve</button>
-              <button className="btn btn-secondary" onClick={() => handleContributionApproval(c._id, "reject")}>Reject</button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn btn-primary btn-sm" onClick={() => handleUserApproval(u._id, "approve")}>Approve</button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => handleUserApproval(u._id, "reject")}>Reject</button>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </section>
+
+        {/* Pending Contributions */}
+        <section>
+          <div className="card-header" style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ margin: 0 }}>Capital Moderation</h2>
+            <span className="badge badge-warning">{pendingContributions.length} Pending</span>
           </div>
-        ))}
-      </section>
+          {pendingContributions.length === 0 ? (
+            <div className="dashboard-card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No capital inflows pending review.</div>
+          ) : (
+            <div className="dashboard-grid">
+              {pendingContributions.map(c => (
+                <div key={c._id} className="dashboard-card">
+                  <h4 style={{ margin: '0 0 0.5rem 0' }}>${c.amount}</h4>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>
+                    <strong>{c.investor?.fullName || 'Investor'}</strong> → {c.campaign?.title}
+                  </p>
 
-      <hr style={{ borderColor: 'var(--border)', margin: '32px 0' }} />
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    {c.proofFile && <a href={`${BASE_URL}/uploads/${c.proofFile}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.6rem' }}>View Proof</a>}
+                  </div>
 
-      <section>
-        <h2>Pending IP Docs ({pendingIpDocs.length})</h2>
-        {pendingIpDocs.length === 0 && <p>No pending IP docs.</p>}
-        {pendingIpDocs.map(doc => (
-          <div key={doc._id} className="card" style={{ marginBottom: 16 }}>
-            <div><strong>{doc.startup?.fullName}</strong> — {doc.startup?.email}</div>
-            <div>File: {doc.file ? <a href={`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/uploads/${doc.file}`} target="_blank" rel="noreferrer">View</a> : "No file"}</div>
-            <div style={{ marginTop: 8 }}>
-              <button className="btn btn-primary" onClick={() => handleIpApproval(doc._id, "approve")} style={{ marginRight: 8 }}>Approve</button>
-              <button className="btn btn-secondary" onClick={() => handleIpApproval(doc._id, "reject")}>Reject</button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn btn-primary btn-sm" onClick={() => handleContributionApproval(c._id, "approve")}>Approve</button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => handleContributionApproval(c._id, "reject")}>Reject</button>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </section>
+
+        {/* User Complaints */}
+        <section>
+          <div className="card-header" style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ margin: 0 }}>Dispatch Reports</h2>
+            <span className="badge badge-secondary" style={{ background: 'rgba(244, 63, 94, 0.2)', color: 'var(--danger)' }}>{complaints.length} Incidents</span>
           </div>
-        ))}
-      </section>
-
-      <hr style={{ borderColor: 'var(--border)', margin: '32px 0' }} />
-
-      <section>
-        <h2>📢 User Complaints ({complaints.length})</h2>
-        {complaints.length === 0 && <p>No complaints found.</p>}
-        {complaints.map(complaint => (
-          <div key={complaint._id} className="card" style={{ marginBottom: 16, borderColor: '#ef4444' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <strong>From: {complaint.user?.fullName || "Unknown"} ({complaint.user?.email})</strong>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(complaint.createdAt).toLocaleDateString()}</span>
+          {complaints.length === 0 ? (
+            <div className="dashboard-card" style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>No system incidents reported.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {complaints.map(complaint => (
+                <div key={complaint._id} className="dashboard-card" style={{ borderLeft: '3px solid var(--danger)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <strong style={{ color: 'var(--text-primary)' }}>Relay: {complaint.user?.fullName || "Unidentified"}</strong>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(complaint.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>Target: <span style={{ color: 'var(--danger)' }}>{complaint.target || "System Core"}</span></div>
+                  <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '0.5rem', fontSize: '0.9rem', lineHeight: '1.6', border: '1px solid var(--border-light)' }}>
+                    {complaint.message}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div style={{ marginTop: 8, fontWeight: 500 }}>Target: {complaint.target || "General"}</div>
-            <div style={{ marginTop: 8, padding: 12, background: 'rgba(0,0,0,0.2)', borderRadius: 4 }}>
-              "{complaint.message}"
-            </div>
-          </div>
-        ))}
-      </section>
+          )}
+        </section>
+      </div>
     </div>
   );
 }
+
