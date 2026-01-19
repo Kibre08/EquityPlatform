@@ -1,15 +1,15 @@
 # Equity Platform
 
 ## Project Description
-A full-stack Equity Platform building using the MERN stack.
+A full-stack Equity Platform built using the MERN stack.
 
 ## Team Members & Contributions
-*   **[Member 1 Name]**: [Role/Contribution, e.g., Frontend UI & Design]
-*   **[Member 2 Name]**: [Role/Contribution, e.g., Backend API & Authentication]
-*   **[Member 3 Name]**: [Role/Contribution, e.g., Database Management]
-*   **[Member 4 Name]**: [Role/Contribution, e.g., Content Management]
+*   **Kibre Moges**: Project Lead & Platform Refinement
+*   **Abel1365**: Backend API & System Architecture
+*   **Danny11w**: Frontend UI/UX & Content Management
+*   **Miyo16**: Database Management & Logic Verification
 
 ## Setup Instructions
-1.  Clone the repo: `git clone <url>`
+1.  Clone the repo: `git clone https://github.com/Kibre08/EquityPlatform`
 2.  Install dependencies: `npm install`
 3.  Run the server: `npm run dev`
