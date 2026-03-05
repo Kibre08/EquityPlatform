@@ -58,7 +58,7 @@ router.get("/contributions", verifyToken, allowRoles("startup"), async (req, res
     const campaigns = await Campaign.find({ startup: req.user.id });
     const campaignIds = campaigns.map(c => c._id);
     const contributions = await Contribution.find({ campaign: { $in: campaignIds }, isApproved: true })
-      .populate("investor", "fullName email")
+      .populate("investor", "fullName email idDocument")
       .populate("campaign", "title");
     res.json({ contributions });
   } catch (err) {

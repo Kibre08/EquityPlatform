@@ -1,12 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Landing() {
+    const { theme, toggleTheme } = useTheme();
+
     return (
         <div className="landing-container">
             <header className="landing-header">
                 <Link to="/" className="logo">EquityPlatform</Link>
                 <div className="nav-links">
+                    <button onClick={toggleTheme} className="btn btn-secondary btn-sm" style={{ padding: "0.5rem" }}>
+                        {theme === "dark" ? "☀️" : "🌙"}
+                    </button>
                     <Link to="/login" className="btn btn-secondary btn-sm">Sign In</Link>
                     <Link to="/register" className="btn btn-primary btn-sm">Get Started</Link>
                 </div>

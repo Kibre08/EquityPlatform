@@ -81,7 +81,17 @@ export default function StartupContributions() {
                                         <td>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 {c.proofFile && <a href={`${BASE_URL}/uploads/${c.proofFile}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.5rem' }}>Proof</a>}
-                                                {c.investorIdFile && <a href={`${BASE_URL}/uploads/${c.investorIdFile}`} target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.5rem' }}>ID Card</a>}
+                                                {(c.investorIdFile || c.investor?.idDocument) && (
+                                                    <a
+                                                        href={`${BASE_URL}/uploads/${c.investorIdFile || c.investor.idDocument}`}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                        className="btn btn-secondary btn-sm"
+                                                        style={{ padding: '0.25rem 0.5rem' }}
+                                                    >
+                                                        ID Card
+                                                    </a>
+                                                )}
                                             </div>
                                         </td>
                                         <td>
@@ -90,7 +100,7 @@ export default function StartupContributions() {
                                             </span>
                                         </td>
                                         <td style={{ textAlign: 'right' }}>
-                                            {c.status === "pending" && (
+                                            {(c.status === "pending" || c.status === "approved") && !c.finalAgreement && (
                                                 uploadingId === c._id ? (
                                                     <div className="glass" style={{ padding: '0.75rem', borderRadius: '0.5rem', display: 'inline-block', textAlign: 'left' }}>
                                                         <input type="file" accept="application/pdf" onChange={(e) => setAgreementFile(e.target.files[0])} style={{ marginBottom: '0.5rem', fontSize: '0.8rem', padding: 0 }} />

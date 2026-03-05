@@ -11,6 +11,12 @@ const campaignSchema = new mongoose.Schema(
     startup: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     category: { type: String },
     agreementFile: { type: String },
+    // New fields
+    images: [{ type: String }], // Array of image filenames/URLs
+    deadline: { type: Date },
+    risks: { type: String },
+    detailedDescription: { type: String },
+    minInvestment: { type: Number, default: 0 },
     status: { type: String, enum: ["active", "closed"], default: "active" },
   },
   { timestamps: true }

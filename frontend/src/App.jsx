@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "r
 import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -36,8 +37,10 @@ function Layout({ user, onLogout, children }) {
   );
 }
 
+// function App() { follows
+
 function App() {
-  // Initialize from localStorage to prevent flicker
+  // ... (existing code for user state and effects)
   const [user, setUser] = useState(() => {
     try {
       const stored = localStorage.getItem("user");
@@ -52,9 +55,6 @@ function App() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          // Verify token by fetching profile
-          // Note for Abel's Branch: Startup/Me might fail if backend isn't fully ready or compatible, 
-          // but we leave this logic as is for now.
           const res = await api.get("/startup/me");
           setUser(res.data.user);
           localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -65,14 +65,12 @@ function App() {
           setUser(null);
         }
       } else {
-        // No token, ensure user is null
         setUser(null);
       }
     };
     checkAuth();
   }, []);
 
-  // helper to refresh user when updated (profile edits, etc.)
   const refreshUser = () => {
     const stored = localStorage.getItem("user");
     if (stored) setUser(JSON.parse(stored));
@@ -86,123 +84,125 @@ function App() {
   };
 
   return (
-    <Router>
-      <Layout user={user} onLogout={handleLogout}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login onLogin={refreshUser} />} />
-          <Route path="/register" element={<Register />} />
+    <ThemeProvider>
+      <Router>
+        <Layout user={user} onLogout={handleLogout}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login onLogin={refreshUser} />} />
+            <Route path="/register" element={<Register />} />
 
-          {/* Admin Routes */}
-          <Route
-            path="/admin-dashboard"
-            element={
-              <PrivateRoute>
-                {user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin-panel"
-            element={
-              <PrivateRoute>
-                {user?.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/ip"
-            element={
-              <PrivateRoute>
-                {user?.role === "admin" ? <AdminIP /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/users"
-            element={
-              <PrivateRoute>
-                {user?.role === "admin" ? <UserManagement /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/admin/content"
-            element={
-              <PrivateRoute>
-                {user?.role === "admin" ? <ManageContent /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
+            {/* Admin Routes */}
+            <Route
+              path="/admin-dashboard"
+              element={
+                <PrivateRoute>
+                  {user?.role === "admin" ? <AdminDashboard /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin-panel"
+              element={
+                <PrivateRoute>
+                  {user?.role === "admin" ? <AdminPanel /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/ip"
+              element={
+                <PrivateRoute>
+                  {user?.role === "admin" ? <AdminIP /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <PrivateRoute>
+                  {user?.role === "admin" ? <UserManagement /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/content"
+              element={
+                <PrivateRoute>
+                  {user?.role === "admin" ? <ManageContent /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
 
-          {/* Startup Routes */}
-          <Route
-            path="/startup-dashboard"
-            element={
-              <PrivateRoute>
-                {user?.role === "startup" ? <StartupDashboard /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/startup/ip"
-            element={
-              <PrivateRoute>
-                {user?.role === "startup" ? <StartupIP /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/startup/contributions"
-            element={
-              <PrivateRoute>
-                {user?.role === "startup" ? <StartupContributions /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/ip-awareness"
-            element={
-              <PrivateRoute>
-                <IPAwareness />
-              </PrivateRoute>
-            }
-          />
+            {/* Startup Routes */}
+            <Route
+              path="/startup-dashboard"
+              element={
+                <PrivateRoute>
+                  {user?.role === "startup" ? <StartupDashboard /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/startup/ip"
+              element={
+                <PrivateRoute>
+                  {user?.role === "startup" ? <StartupIP /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/startup/contributions"
+              element={
+                <PrivateRoute>
+                  {user?.role === "startup" ? <StartupContributions /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ip-awareness"
+              element={
+                <PrivateRoute>
+                  <IPAwareness />
+                </PrivateRoute>
+              }
+            />
 
-          {/* Investor Routes */}
-          <Route
-            path="/investor-dashboard"
-            element={
-              <PrivateRoute>
-                {user?.role === "investor" ? <InvestorDashboard /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/investor/agreements"
-            element={
-              <PrivateRoute>
-                {user?.role === "investor" ? <InvestorAgreements /> : <Navigate to="/login" />}
-              </PrivateRoute>
-            }
-          />
+            {/* Investor Routes */}
+            <Route
+              path="/investor-dashboard"
+              element={
+                <PrivateRoute>
+                  {user?.role === "investor" ? <InvestorDashboard /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/investor/agreements"
+              element={
+                <PrivateRoute>
+                  {user?.role === "investor" ? <InvestorAgreements /> : <Navigate to="/login" />}
+                </PrivateRoute>
+              }
+            />
 
-          {/* Shared */}
-          <Route
-            path="/messages"
-            element={
-              <PrivateRoute>
-                <Messaging />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/campaigns" element={<CampaignList />} />
+            {/* Shared */}
+            <Route
+              path="/messages"
+              element={
+                <PrivateRoute>
+                  <Messaging />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/campaigns" element={<CampaignList />} />
 
-          {/* Default Redirect */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
-    </Router>
+            {/* Default Redirect */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   );
 }
 

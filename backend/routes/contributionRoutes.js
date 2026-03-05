@@ -76,7 +76,7 @@ router.get("/startup/contributions", verifyToken, allowRoles("startup"), async (
 
     // 2. Find contributions for these campaigns
     const contributions = await Contribution.find({ campaign: { $in: campaignIds } })
-      .populate("investor", "fullName email")
+      .populate("investor", "fullName email idDocument")
       .populate("campaign", "title");
 
     console.log(`Found ${contributions.length} contributions`);

@@ -7,10 +7,15 @@ const { verifyToken, allowRoles } = require("../middleware/authMiddleware");
 const upload = require("../middleware/upload");
 
 // create campaign (startup)
-router.post("/", verifyToken, allowRoles("startup"), upload.single("agreement"), async (req, res) => {
+// create campaign (startup)
+router.post("/", verifyToken, allowRoles("startup"), upload.fields([{ name: "agreement", maxCount: 1 }, { name: "images", maxCount: 5 }]), async (req, res) => {
   try {
-    const { title, shortDescription, description, goalAmount, category } = req.body;
+    const { title, shortDescription, description, goalAmount, category, deadline, risks, detailedDescription, minInvestment } = req.body;
     if (!title) return res.status(400).json({ msg: "Title required" });
+
+    // Handle files
+    const agreementFile = req.files && req.files["agreement"] ? req.files["agreement"][0].filename : undefined;
+    const imageFiles = req.files && req.files["images"] ? req.files["images"].map(f => f.filename) : [];
 
     const newCampaign = new Campaign({
       title,
@@ -19,7 +24,12 @@ router.post("/", verifyToken, allowRoles("startup"), upload.single("agreement"),
       goalAmount: goalAmount || 0,
       startup: req.user.id,
       category,
-      agreementFile: req.file ? req.file.filename : undefined,
+      agreementFile,
+      images: imageFiles,
+      deadline,
+      risks,
+      detailedDescription,
+      minInvestment: minInvestment || 0,
     });
 
     await newCampaign.save();

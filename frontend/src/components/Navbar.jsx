@@ -1,8 +1,10 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext.jsx";
 
 export default function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -15,7 +17,10 @@ export default function Navbar({ user, onLogout }) {
 
   return (
     <nav className="glass">
-      <div className="nav-brand">
+      <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <button onClick={() => navigate(-1)} className="btn btn-secondary btn-sm" style={{ padding: '0.25rem 0.5rem' }}>
+          &larr;
+        </button>
         <Link to="/" className="logo">
           EquityPlatform
         </Link>
@@ -66,14 +71,26 @@ export default function Navbar({ user, onLogout }) {
           </>
         )}
 
+
+
         {user ? (
-          <button onClick={handleLogout} className="btn btn-secondary btn-sm">
-            Logout
-          </button>
+          <>
+            <button onClick={toggleTheme} className="btn btn-secondary btn-sm">
+              {theme === "light" ? "🌙" : "☀️"}
+            </button>
+            <button onClick={handleLogout} className="btn btn-secondary btn-sm">
+              Logout
+            </button>
+          </>
         ) : (
-          <Link to="/login" className="btn btn-primary btn-sm">
-            Login
-          </Link>
+          <>
+            <button onClick={toggleTheme} className="btn btn-secondary btn-sm">
+              {theme === "light" ? "🌙" : "☀️"}
+            </button>
+            <Link to="/login" className="btn btn-primary btn-sm">
+              Login
+            </Link>
+          </>
         )}
       </div>
     </nav>
